@@ -65,16 +65,26 @@ def calc_temps(start):
     session.close()
     all_calc = []
 
-    for start_date, tmin, tavg, tmax in results:
+    for date, tmin, tavg, tmax in results:
         calc_dict = {}
-        calc_dict[start_date] = tmin, tavg, tmax
+        calc_dict[date] = tmin, tavg, tmax
 
         all_calc.append(calc_dict)
     
     return jsonify(all_calc)
 
+@app.route("/api/v1.0/<start>/<end>")
+def calc_temps2(start, end):
+    session = Session(engine)
+    results = ession.query(Measurement.date, func.min(Measurement.tobs), func.avg(Measurement.tobs), func.max(Measurement.tobs)).filter(Measurement.date >= start).filter(Measurement.date <= end).all()
+    session.close()
+    all_calc2 = []
 
+    for date, tmin, tavg, tmax in results:
+        calc_dict2 = {}
+        calc_dict2[date] = tmin, tavg, tmax
 
+        all_calc2.append(calc_dict2)
 
 if __name__ == "__main__":
     app.run(debug=True)
